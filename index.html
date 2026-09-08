@@ -11,7 +11,7 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#173d2b">
 
-  <!-- Ícono para iPhone, iPad y navegadores -->
+  <!-- Ícono para iPad / iPhone -->
   <link rel="apple-touch-icon" href="icono.png">
   <link rel="icon" type="image/png" href="icono.png">
 
@@ -71,6 +71,7 @@
       width: 100%;
     }
 
+    /* 1 Columna en Vertical */
     .grid {
       display: flex;
       flex-direction: column;
@@ -78,6 +79,7 @@
       width: 100%;
     }
 
+    /* 2 Columnas en Horizontal o Pantallas Grandes */
     @media (orientation: landscape) and (min-width: 580px), (min-width: 768px) {
       .grid {
         display: grid;
@@ -290,6 +292,7 @@
       font-size: 12px;
     }
 
+    /* Modal de acceso responsive */
     .bloqueo-acceso {
       position: fixed;
       inset: 0;
@@ -417,7 +420,7 @@
           </select>
         </div>
 
-        <!-- Oficial Graduado: Oculto para Subtenientes y Tenientes -->
+        <!-- Oficial Graduado (Se oculta para Subtenientes y Tenientes) -->
         <div class="campo" id="campoEsGraduado">
           <label for="esGraduado">&iquest;Es Oficial Graduado?</label>
           <select id="esGraduado" onchange="actualizarOpciones()">
@@ -464,7 +467,7 @@
           </select>
         </div>
 
-        <!-- Unidad COP: Oculto para Generales -->
+        <!-- Unidad COP (Se oculta para Generales) -->
         <div class="campo" id="campoUnidadCOP">
           <label for="unidadCOP">&iquest;Pertenece a Unidad COP?</label>
           <select id="unidadCOP">
@@ -876,45 +879,46 @@
         "General Director"
       ];
 
-      // 1. REGLA: Subteniente y Teniente no pueden ser graduados (oculta opción)
+      // 1. REGLA SUBTENIENTES Y TENIENTES: Ocultar completamente la fila de graduado
       if (nuncaGraduados.includes(grado)) {
-        campoEsGraduado.classList.add("oculto");
+        campoEsGraduado.style.display = "none";
         selectEsGraduado.value = "No";
+        selectEsGraduado.disabled = false;
       } else if (siempreGraduados.includes(grado)) {
-        campoEsGraduado.classList.remove("oculto");
+        campoEsGraduado.style.display = "block";
         selectEsGraduado.value = "Sí";
         selectEsGraduado.disabled = true;
       } else {
         // Capitán y Mayor
-        campoEsGraduado.classList.remove("oculto");
+        campoEsGraduado.style.display = "block";
         selectEsGraduado.disabled = false;
       }
 
       const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
 
-      // 2. REGLA: Graduado reconoce obligatoriamente Título Profesional (35%)
-      campoSobresueldo.classList.remove("oculto");
+      // 2. REGLA GRADUADOS: Fija y bloquea Sobresueldo en Título Profesional (35%)
+      campoSobresueldo.style.display = "block";
       if (esGraduado) {
         sobresueldo.value = "Título profesional";
-        sobresueldo.disabled = true;
+        sobresueldo.disabled = true; // Inmodificable
       } else {
         sobresueldo.disabled = false;
       }
 
       // Asignación Policial solo si NO es graduado y NO tiene sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
-        campoAsignacionPolicial.classList.remove("oculto");
+        campoAsignacionPolicial.style.display = "block";
       } else {
         asignacionPolicial.value = "No";
-        campoAsignacionPolicial.classList.add("oculto");
+        campoAsignacionPolicial.style.display = "none";
       }
 
-      // 3. REGLA: Generales no pueden pertenecer a Unidad COP (oculta opción)
+      // 3. REGLA GENERALES: Ocultar completamente la opción COP
       if (gradosGenerales.includes(grado)) {
-        campoCOP.classList.add("oculto");
+        campoCOP.style.display = "none";
         selectCOP.value = "No";
       } else {
-        campoCOP.classList.remove("oculto");
+        campoCOP.style.display = "block";
       }
     }
 
@@ -934,18 +938,48 @@
       estado.className = "estado";
       estado.textContent = "";
 
+      const grado = document.getElementById("grado").value;
+      const nuncaGraduados = ["Subteniente", "Teniente"];
+      const siempreGraduados = [
+        "Teniente Coronel", 
+        "Coronel", 
+        "General", 
+        "General Inspector", 
+        "General Director"
+      ];
+      const gradosGenerales = [
+        "General", 
+        "General Inspector", 
+        "General Director"
+      ];
+
+      // Obtener y sanitizar valores de inputs
+      let esGraduadoVal = "No";
+      if (!nuncaGraduados.includes(grado)) {
+        esGraduadoVal = siempreGraduados.includes(grado) ? "Sí" : document.getElementById("esGraduado").value;
+      }
+
+      let sobresueldoVal = "Ninguno";
+      if (esGraduadoVal === "Sí") {
+        sobresueldoVal = "Título profesional";
+      } else {
+        sobresueldoVal = document.getElementById("sobresueldo").value;
+      }
+
+      const unidadCOPVal = gradosGenerales.includes(grado) ? "No" : document.getElementById("unidadCOP").value;
+
       const datos = {
         fechaConsulta: document.getElementById("fechaConsulta").value,
         fechaIngreso: document.getElementById("fechaIngreso").value,
-        grado: document.getElementById("grado").value,
+        grado: grado,
         cargasFamiliares: document.getElementById("cargasFamiliares").value,
-        esGraduado: document.getElementById("esGraduado").value,
-        sobresueldo: document.getElementById("sobresueldo").value,
+        esGraduado: esGraduadoVal,
+        sobresueldo: sobresueldoVal,
         asignacionPolicial: document.getElementById("asignacionPolicial").value,
         porcentajeZona: document.getElementById("porcentajeZona").value,
         correspondeCasa: document.getElementById("correspondeCasa").value,
         ocupaCasaFiscal: document.getElementById("ocupaCasaFiscal").value,
-        unidadCOP: document.getElementById("unidadCOP").value,
+        unidadCOP: unidadCOPVal,
         descuentosParticulares: document.getElementById("descuentosParticulares").value,
         tokenAcceso: (leerAccesoLocal_() || {}).token || ""
       };
@@ -962,7 +996,7 @@
 
       const estado = document.getElementById("estado");
       estado.className = "estado ok";
-      estado.textContent = "Calculo realizado correctamente.";
+      estado.textContent = "Cálculo realizado correctamente.";
 
       document.getElementById("resultado").style.display = "block";
 
@@ -975,7 +1009,7 @@
         tarjeta("Fecha consultada", resultado.fechaConsulta) +
         tarjeta("Años de servicio", resultado.aniosServicio) +
         tarjeta("Trienios", resultado.trienios) +
-        tarjeta("Sueldo en posesion", moneda(resultado.sueldoPosesion));
+        tarjeta("Sueldo en posesión", moneda(resultado.sueldoPosesion));
 
       document.getElementById("tablaHaberes").innerHTML =
         resultado.haberes
@@ -1044,7 +1078,7 @@
       estado.textContent =
         error && error.message
           ? error.message
-          : "No fue posible realizar el calculo.";
+          : "No fue posible realizar el cálculo.";
     }
 
     function tarjetaPrincipal(titulo, valor) {
