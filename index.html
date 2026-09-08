@@ -71,7 +71,6 @@
       width: 100%;
     }
 
-    /* 1 Columna en Vertical (Portrait) */
     .grid {
       display: flex;
       flex-direction: column;
@@ -79,7 +78,6 @@
       width: 100%;
     }
 
-    /* 2 Columnas en Horizontal (Landscape) o Pantallas Grandes */
     @media (orientation: landscape) and (min-width: 580px), (min-width: 768px) {
       .grid {
         display: grid;
@@ -292,7 +290,6 @@
       font-size: 12px;
     }
 
-    /* Modal de acceso responsive */
     .bloqueo-acceso {
       position: fixed;
       inset: 0;
@@ -420,7 +417,8 @@
           </select>
         </div>
 
-        <div class="campo">
+        <!-- Oficial Graduado: Oculto para Subtenientes y Tenientes -->
+        <div class="campo" id="campoEsGraduado">
           <label for="esGraduado">&iquest;Es Oficial Graduado?</label>
           <select id="esGraduado" onchange="actualizarOpciones()">
             <option value="No">No</option>
@@ -466,7 +464,8 @@
           </select>
         </div>
 
-        <div class="campo">
+        <!-- Unidad COP: Oculto para Generales -->
+        <div class="campo" id="campoUnidadCOP">
           <label for="unidadCOP">&iquest;Pertenece a Unidad COP?</label>
           <select id="unidadCOP">
             <option value="No">No</option>
@@ -540,7 +539,7 @@
     </footer>
   </main>
 
-  <!-- Modal de solicitud / validación de acceso -->
+  <!-- Modal de acceso -->
   <div id="bloqueoAcceso" class="bloqueo-acceso">
     <div class="acceso-card">
       <h2 id="tituloAcceso">ACCESO AL SIMULADOR</h2>
@@ -594,9 +593,7 @@
   </div>
 
   <script>
-    // URL de tu aplicación Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbyulq9EwuezK0LMvOLxmKiPwn-axC6Z_guXu4FhVoSn5HcVFtQuyRMXvSA6Ba-YtJjP/exec";
-
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
     async function ejecutarApiGAS(accion, payload = {}) {
@@ -856,15 +853,17 @@
 
     function actualizarOpciones() {
       const grado = document.getElementById("grado").value;
+      const campoEsGraduado = document.getElementById("campoEsGraduado");
       const selectEsGraduado = document.getElementById("esGraduado");
       const campoSobresueldo = document.getElementById("campoSobresueldo");
       const sobresueldo = document.getElementById("sobresueldo");
       const campoAsignacionPolicial = document.getElementById("campoAsignacionPolicial");
       const asignacionPolicial = document.getElementById("asignacionPolicial");
+      const campoCOP = document.getElementById("campoUnidadCOP");
       const selectCOP = document.getElementById("unidadCOP");
 
       const nuncaGraduados = ["Subteniente", "Teniente"];
-      const siempreGraduadosConTitulo = [
+      const siempreGraduados = [
         "Teniente Coronel", 
         "Coronel", 
         "General", 
@@ -877,46 +876,45 @@
         "General Director"
       ];
 
-      // Oficial Graduado y Título Profesional (35%)
+      // 1. REGLA: Subteniente y Teniente no pueden ser graduados (oculta opción)
       if (nuncaGraduados.includes(grado)) {
+        campoEsGraduado.classList.add("oculto");
         selectEsGraduado.value = "No";
-        selectEsGraduado.disabled = true;
-        selectEsGraduado.title = "Solo el personal desde Capitán hacia arriba puede ser Oficial Graduado.";
-        sobresueldo.disabled = false;
-        sobresueldo.title = "";
-      } else if (siempreGraduadosConTitulo.includes(grado)) {
+      } else if (siempreGraduados.includes(grado)) {
+        campoEsGraduado.classList.remove("oculto");
         selectEsGraduado.value = "Sí";
         selectEsGraduado.disabled = true;
-        selectEsGraduado.title = "Desde Teniente Coronel hacia arriba es requisito obligatorio ser Oficial Graduado.";
+      } else {
+        // Capitán y Mayor
+        campoEsGraduado.classList.remove("oculto");
+        selectEsGraduado.disabled = false;
+      }
+
+      const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
+
+      // 2. REGLA: Graduado reconoce obligatoriamente Título Profesional (35%)
+      campoSobresueldo.classList.remove("oculto");
+      if (esGraduado) {
         sobresueldo.value = "Título profesional";
         sobresueldo.disabled = true;
-        sobresueldo.title = "Desde Teniente Coronel hacia arriba se reconoce automáticamente el Título Profesional (35%).";
       } else {
-        selectEsGraduado.disabled = false;
-        selectEsGraduado.title = "";
         sobresueldo.disabled = false;
-        sobresueldo.title = "";
       }
 
-      // Unidad COP (Excluido para Oficiales Generales)
-      if (gradosGenerales.includes(grado)) {
-        selectCOP.value = "No";
-        selectCOP.disabled = true;
-        selectCOP.title = "Los Oficiales Generales no pueden pertenecer a Unidad COP.";
-      } else {
-        selectCOP.disabled = false;
-        selectCOP.title = "";
-      }
-
-      const esGraduado = selectEsGraduado.value === "Sí";
-      campoSobresueldo.classList.remove("oculto");
-
-      // Asignación Policial solo si NO es graduado y NO percibe sobresueldo
+      // Asignación Policial solo si NO es graduado y NO tiene sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
         campoAsignacionPolicial.classList.remove("oculto");
       } else {
         asignacionPolicial.value = "No";
         campoAsignacionPolicial.classList.add("oculto");
+      }
+
+      // 3. REGLA: Generales no pueden pertenecer a Unidad COP (oculta opción)
+      if (gradosGenerales.includes(grado)) {
+        campoCOP.classList.add("oculto");
+        selectCOP.value = "No";
+      } else {
+        campoCOP.classList.remove("oculto");
       }
     }
 
