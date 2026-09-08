@@ -11,6 +11,10 @@
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#173d2b">
 
+  <!-- Ícono para iPhone, iPad y navegadores -->
+  <link rel="apple-touch-icon" href="icono.png">
+  <link rel="icon" type="image/png" href="icono.png">
+
   <style>
     *, *::before, *::after { 
       box-sizing: border-box !important;
@@ -416,7 +420,7 @@
           </select>
         </div>
 
-        <div class="campo" id="campoEsGraduado">
+        <div class="campo">
           <label for="esGraduado">&iquest;Es Oficial Graduado?</label>
           <select id="esGraduado" onchange="actualizarOpciones()">
             <option value="No">No</option>
@@ -462,7 +466,7 @@
           </select>
         </div>
 
-        <div class="campo" id="campoUnidadCOP">
+        <div class="campo">
           <label for="unidadCOP">&iquest;Pertenece a Unidad COP?</label>
           <select id="unidadCOP">
             <option value="No">No</option>
@@ -536,7 +540,7 @@
     </footer>
   </main>
 
-  <!-- Modal de acceso -->
+  <!-- Modal de solicitud / validación de acceso -->
   <div id="bloqueoAcceso" class="bloqueo-acceso">
     <div class="acceso-card">
       <h2 id="tituloAcceso">ACCESO AL SIMULADOR</h2>
@@ -590,36 +594,19 @@
   </div>
 
   <script>
-    // Pega aquí la URL Web App de tu Google Apps Script (/exec) para conectar la App independiente
-    const API_URL = "https://script.google.com/macros/s/AKfycbzTsX68g-ni4kevU-_bc87gE3Lu0RqLNPrTNS6T9FbL6PNfzxvAPfMFxa7GDfBvvRj_/exec";
+    // URL de tu aplicación Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbzL7QfG4bKev2lUqPZtK3gI-gC2n4Vf8c5b_example/exec";
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
     async function ejecutarApiGAS(accion, payload = {}) {
-      if (!API_URL.includes("TU_URL_AQUI")) {
-        try {
-          const respuesta = await fetch(API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({ accion, ...payload })
-          });
-          const json = await respuesta.json();
-          if (!json.ok) throw new Error(json.error);
-          return json.data;
-        } catch (err) {
-          throw new Error(err.message || "Error al conectar con el servidor.");
-        }
-      }
-
-      return new Promise((resolve, reject) => {
-        if (typeof google !== "undefined" && google.script && google.script.run) {
-          if (accion === "verificarAcceso") google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).verificarAcceso(payload.token);
-          if (accion === "solicitarAcceso") google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).solicitarAcceso(payload.nombre, payload.email);
-          if (accion === "recuperarAcceso") google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).recuperarAccesoPorEmail(payload.email);
-          if (accion === "calcularRemuneracion") google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).calcularRemuneracion(payload.datos);
-        } else {
-          reject(new Error("Configura la API_URL de tu Web App para usar la aplicación independiente."));
-        }
+      const respuesta = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ accion, ...payload })
       });
+      const json = await respuesta.json();
+      if (!json.ok) throw new Error(json.error);
+      return json.data;
     }
 
     function leerAccesoLocal_() {
@@ -850,20 +837,6 @@
       comprobarAccesoUsuario();
     });
 
-    // Bloqueo estricto de gestos zoom táctiles
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
-    });
-
-    let ultimoToque = 0;
-    document.addEventListener('touchend', function (e) {
-      const ahora = Date.now();
-      if (ahora - ultimoToque <= 300) {
-        e.preventDefault();
-      }
-      ultimoToque = ahora;
-    }, false);
-
     function actualizarCasaFiscal() {
       const ocupaCasaFiscal = document.getElementById("ocupaCasaFiscal").value === "Sí";
       const correspondeCasa = document.getElementById("correspondeCasa");
@@ -882,17 +855,15 @@
 
     function actualizarOpciones() {
       const grado = document.getElementById("grado").value;
-      const campoEsGraduado = document.getElementById("campoEsGraduado");
       const selectEsGraduado = document.getElementById("esGraduado");
       const campoSobresueldo = document.getElementById("campoSobresueldo");
       const sobresueldo = document.getElementById("sobresueldo");
       const campoAsignacionPolicial = document.getElementById("campoAsignacionPolicial");
       const asignacionPolicial = document.getElementById("asignacionPolicial");
-      const campoCOP = document.getElementById("campoUnidadCOP");
       const selectCOP = document.getElementById("unidadCOP");
 
       const nuncaGraduados = ["Subteniente", "Teniente"];
-      const siempreGraduados = [
+      const siempreGraduadosConTitulo = [
         "Teniente Coronel", 
         "Coronel", 
         "General", 
@@ -905,49 +876,46 @@
         "General Director"
       ];
 
-      // 1. Subteniente y Teniente no muestran el campo Oficial Graduado
+      // Oficial Graduado y Título Profesional (35%)
       if (nuncaGraduados.includes(grado)) {
-        campoEsGraduado.classList.add("oculto");
         selectEsGraduado.value = "No";
-      } else if (siempreGraduados.includes(grado)) {
-        campoEsGraduado.classList.remove("oculto");
+        selectEsGraduado.disabled = true;
+        selectEsGraduado.title = "Solo el personal desde Capitán hacia arriba puede ser Oficial Graduado.";
+        sobresueldo.disabled = false;
+        sobresueldo.title = "";
+      } else if (siempreGraduadosConTitulo.includes(grado)) {
         selectEsGraduado.value = "Sí";
         selectEsGraduado.disabled = true;
-        selectEsGraduado.title = "Desde Teniente Coronel hacia arriba es obligatorio ser Oficial Graduado.";
-      } else {
-        // Capitán y Mayor
-        campoEsGraduado.classList.remove("oculto");
-        selectEsGraduado.disabled = false;
-        selectEsGraduado.title = "";
-      }
-
-      const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
-
-      // 2. Si es graduado, fija y bloquea el Segundo Sobresueldo de Título Profesional (35%)
-      campoSobresueldo.classList.remove("oculto");
-      if (esGraduado) {
+        selectEsGraduado.title = "Desde Teniente Coronel hacia arriba es requisito obligatorio ser Oficial Graduado.";
         sobresueldo.value = "Título profesional";
         sobresueldo.disabled = true;
-        sobresueldo.title = "Al ser Oficial Graduado, se reconoce automáticamente el Título Profesional (35%).";
+        sobresueldo.title = "Desde Teniente Coronel hacia arriba se reconoce automáticamente el Título Profesional (35%).";
       } else {
+        selectEsGraduado.disabled = false;
+        selectEsGraduado.title = "";
         sobresueldo.disabled = false;
         sobresueldo.title = "";
       }
 
-      // Asignación Policial solo disponible si no es graduado y no percibe sobresueldo
+      // Unidad COP (Excluido para Oficiales Generales)
+      if (gradosGenerales.includes(grado)) {
+        selectCOP.value = "No";
+        selectCOP.disabled = true;
+        selectCOP.title = "Los Oficiales Generales no pueden pertenecer a Unidad COP.";
+      } else {
+        selectCOP.disabled = false;
+        selectCOP.title = "";
+      }
+
+      const esGraduado = selectEsGraduado.value === "Sí";
+      campoSobresueldo.classList.remove("oculto");
+
+      // Asignación Policial solo si NO es graduado y NO percibe sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
         campoAsignacionPolicial.classList.remove("oculto");
       } else {
         asignacionPolicial.value = "No";
         campoAsignacionPolicial.classList.add("oculto");
-      }
-
-      // 3. Generales no muestran la opción de Unidad COP
-      if (gradosGenerales.includes(grado)) {
-        campoCOP.classList.add("oculto");
-        selectCOP.value = "No";
-      } else {
-        campoCOP.classList.remove("oculto");
       }
     }
 
