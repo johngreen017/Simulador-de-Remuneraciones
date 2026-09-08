@@ -39,14 +39,15 @@
       background: #f3f5f3;
       color: #1f2923;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      /* Margen superior con Safe Area para respetar la Isla Dinámica, notch y barra de estado */
-      padding: calc(20px + env(safe-area-inset-top)) 10px calc(15px + env(safe-area-inset-bottom));
+      padding: 0 10px calc(25px + env(safe-area-inset-bottom));
     }
 
+    /* Margen superior forzado para despejar Isla Dinámica, notch y barra superior */
     .contenedor {
       width: 100% !important;
       max-width: 960px;
       margin: 0 auto;
+      margin-top: max(75px, calc(30px + env(safe-area-inset-top))) !important;
     }
 
     .encabezado {
@@ -449,7 +450,7 @@
 
         <div class="campo">
           <label for="porcentajeZona">Porcentaje de zona</label>
-          <input type="number" id="porcentajeZona" min="0" step="1" value="0" inputmode="numeric">
+          <input type="number" id="porcentajeZona" min="0" step="1" value="0">
         </div>
 
         <div class="campo">
@@ -880,7 +881,7 @@
         "General Director"
       ];
 
-      // 1. REGLA SUBTENIENTES Y TENIENTES: Ocultar completamente la opción de graduado
+      // 1. REGLA SUBTENIENTES Y TENIENTES: Ocultar completamente la opción
       if (nuncaGraduados.includes(grado)) {
         campoEsGraduado.style.display = "none";
         selectEsGraduado.value = "No";
@@ -890,23 +891,23 @@
         selectEsGraduado.value = "Sí";
         selectEsGraduado.disabled = true;
       } else {
-        // Capitán y Mayor: pueden elegir
+        // Capitán y Mayor
         campoEsGraduado.style.display = "block";
         selectEsGraduado.disabled = false;
       }
 
       const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
 
-      // 2. REGLA OFICIAL GRADUADO: Fija y bloquea Sobresueldo en Título Profesional (35%)
+      // 2. REGLA OFICIAL GRADUADO: Fija 'Título profesional' y BLOQUEA el selector
       campoSobresueldo.style.display = "block";
       if (esGraduado) {
         sobresueldo.value = "Título profesional";
-        sobresueldo.disabled = true;
+        sobresueldo.disabled = true; // Inmodificable
       } else {
         sobresueldo.disabled = false;
       }
 
-      // Asignación Policial solo si NO es graduado y NO tiene sobresueldo
+      // Asignación Policial solo disponible si NO es graduado y NO tiene sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
         campoAsignacionPolicial.style.display = "block";
       } else {
