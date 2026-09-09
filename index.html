@@ -42,7 +42,7 @@
       padding: 0 10px calc(25px + env(safe-area-inset-bottom));
     }
 
-    /* Margen superior forzado para despejar Isla Dinámica, notch y barra superior */
+    /* Margen superior forzado para despejar Isla Dinámica, notch y barra de estado */
     .contenedor {
       width: 100% !important;
       max-width: 960px;
@@ -598,7 +598,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyulq9EwuezK0LMvOLxmKiPwn-axC6Z_guXu4FhVoSn5HcVFtQuyRMXvSA6Ba-YtJjP/exec";
+    // Tu nueva URL implementada en Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbx-Co0NOO0qrqa9gz-u4GiduhpVL5XLHJAsMBVqaC_QjubKDUaXKPrkinvCwkC1VWlW/exec";
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
     async function ejecutarApiGAS(accion, payload = {}) {
@@ -881,7 +882,7 @@
         "General Director"
       ];
 
-      // 1. REGLA SUBTENIENTES Y TENIENTES: Ocultar completamente la opción
+      // 1. REGLA SUBTENIENTES Y TENIENTES
       if (nuncaGraduados.includes(grado)) {
         campoEsGraduado.style.display = "none";
         selectEsGraduado.value = "No";
@@ -891,23 +892,22 @@
         selectEsGraduado.value = "Sí";
         selectEsGraduado.disabled = true;
       } else {
-        // Capitán y Mayor
         campoEsGraduado.style.display = "block";
         selectEsGraduado.disabled = false;
       }
 
       const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
 
-      // 2. REGLA OFICIAL GRADUADO: Fija 'Título profesional' y BLOQUEA el selector
+      // 2. REGLA SOBRESUELDO OFICIAL GRADUADO
       campoSobresueldo.style.display = "block";
       if (esGraduado) {
         sobresueldo.value = "Título profesional";
-        sobresueldo.disabled = true; // Inmodificable
+        sobresueldo.disabled = true;
       } else {
         sobresueldo.disabled = false;
       }
 
-      // Asignación Policial solo disponible si NO es graduado y NO tiene sobresueldo
+      // Asignación Policial solo si NO tiene ningún sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
         campoAsignacionPolicial.style.display = "block";
       } else {
@@ -915,7 +915,7 @@
         campoAsignacionPolicial.style.display = "none";
       }
 
-      // 3. REGLA GENERALES: Ocultar completamente la opción COP
+      // 3. REGLA GENERALES
       if (gradosGenerales.includes(grado)) {
         campoCOP.style.display = "none";
         selectCOP.value = "No";
@@ -955,7 +955,6 @@
         "General Director"
       ];
 
-      // Sanitizar valores antes de enviar
       let esGraduadoVal = "No";
       if (!nuncaGraduados.includes(grado)) {
         esGraduadoVal = siempreGraduados.includes(grado) ? "Sí" : document.getElementById("esGraduado").value;
