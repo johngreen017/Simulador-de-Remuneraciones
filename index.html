@@ -42,7 +42,7 @@
       padding: 0 10px calc(25px + env(safe-area-inset-bottom));
     }
 
-    /* Margen superior forzado para despejar Isla Dinámica, notch y barra de estado */
+    /* Margen superior forzado para respetar Isla Dinámica, Notch y Barra de Estado */
     .contenedor {
       width: 100% !important;
       max-width: 960px;
@@ -106,9 +106,7 @@
       color: #173d2b;
     }
 
-    input,
-    select,
-    button {
+    input, select, button {
       display: block;
       width: 100% !important;
       min-width: 0 !important;
@@ -232,9 +230,7 @@
       font-size: 11px;
     }
 
-    .tarjeta strong { 
-      font-size: 13px; 
-    }
+    .tarjeta strong { font-size: 13px; }
 
     .seccion {
       margin-bottom: 14px;
@@ -294,7 +290,7 @@
       font-size: 12px;
     }
 
-    /* Modal de acceso responsive */
+    /* Modal de Acceso */
     .bloqueo-acceso {
       position: fixed;
       inset: 0;
@@ -386,7 +382,7 @@
         </div>
 
         <div class="campo">
-          <label for="fechaIngreso">Fecha de ingreso a la instituci&oacute;n</label>
+          <label for="fechaIngreso">Fecha de ingreso a la institución</label>
           <input type="date" id="fechaIngreso">
         </div>
 
@@ -395,7 +391,7 @@
           <select id="grado" onchange="actualizarOpciones()">
             <option value="Subteniente">Subteniente</option>
             <option value="Teniente">Teniente</option>
-            <option value="Capit&aacute;n">Capit&aacute;n</option>
+            <option value="Capitán">Capitán</option>
             <option value="Mayor" selected>Mayor</option>
             <option value="Teniente Coronel">Teniente Coronel</option>
             <option value="Coronel">Coronel</option>
@@ -422,12 +418,11 @@
           </select>
         </div>
 
-        <!-- Oficial Graduado (Se oculta para Subtenientes y Tenientes) -->
         <div class="campo" id="campoEsGraduado">
-          <label for="esGraduado">&iquest;Es Oficial Graduado?</label>
+          <label for="esGraduado">¿Es Oficial Graduado?</label>
           <select id="esGraduado" onchange="actualizarOpciones()">
             <option value="No">No</option>
-            <option value="S&iacute;">S&iacute;</option>
+            <option value="Sí">Sí</option>
           </select>
         </div>
 
@@ -436,15 +431,15 @@
           <select id="sobresueldo" onchange="actualizarOpciones()">
             <option value="Ninguno">Ninguno</option>
             <option value="Especialidad">Especialidad (35%)</option>
-            <option value="T&iacute;tulo profesional">S.S. T&iacute;tulo Profesional (35%)</option>
+            <option value="Título profesional">S.S. Título Profesional (35%)</option>
           </select>
         </div>
 
         <div class="campo" id="campoAsignacionPolicial">
-          <label for="asignacionPolicial">&iquest;Percibe Asignaci&oacute;n Policial (35%)?</label>
+          <label for="asignacionPolicial">¿Percibe Asignación Policial (35%)?</label>
           <select id="asignacionPolicial">
             <option value="No">No</option>
-            <option value="S&iacute;">S&iacute;</option>
+            <option value="Sí">Sí</option>
           </select>
         </div>
 
@@ -454,39 +449,38 @@
         </div>
 
         <div class="campo">
-          <label for="ocupaCasaFiscal">&iquest;Ocupa casa fiscal?</label>
+          <label for="ocupaCasaFiscal">¿Ocupa casa fiscal?</label>
           <select id="ocupaCasaFiscal" onchange="actualizarCasaFiscal()">
             <option value="No">No</option>
-            <option value="S&iacute;">S&iacute;</option>
+            <option value="Sí">Sí</option>
           </select>
         </div>
 
         <div class="campo">
-          <label for="correspondeCasa">&iquest;Le corresponde asignaci&oacute;n de casa?</label>
+          <label for="correspondeCasa">¿Le corresponde asignación de casa?</label>
           <select id="correspondeCasa">
             <option value="No">No</option>
-            <option value="S&iacute;">S&iacute;</option>
+            <option value="Sí">Sí</option>
           </select>
         </div>
 
-        <!-- Unidad COP (Se oculta para Generales) -->
         <div class="campo" id="campoUnidadCOP">
-          <label for="unidadCOP">&iquest;Pertenece a Unidad COP?</label>
+          <label for="unidadCOP">¿Pertenece a Unidad COP?</label>
           <select id="unidadCOP">
             <option value="No">No</option>
-            <option value="S&iacute;">S&iacute;</option>
+            <option value="Sí">Sí</option>
           </select>
         </div>
 
         <div class="campo campo-descuentos">
           <label for="descuentosParticulares">Descuentos particulares</label>
           <input type="number" id="descuentosParticulares" min="0" step="1" value="0" inputmode="numeric">
-          <div class="ayuda-campo">(Ingresar total registrado en &uacute;ltima liquidaci&oacute;n)</div>
+          <div class="ayuda-campo">(Ingresar total registrado en última liquidación)</div>
         </div>
       </div>
 
       <button id="botonCalcular" type="button" onclick="calcular()">
-        CALCULAR REMUNERACI&Oacute;N
+        CALCULAR REMUNERACIÓN
       </button>
 
       <div id="estado" class="estado"></div>
@@ -544,11 +538,10 @@
     </footer>
   </main>
 
-  <!-- Modal de acceso -->
   <div id="bloqueoAcceso" class="bloqueo-acceso">
     <div class="acceso-card">
       <h2 id="tituloAcceso">ACCESO AL SIMULADOR</h2>
-      <p id="mensajeAcceso">Elige una opci&oacute;n para continuar:</p>
+      <p id="mensajeAcceso">Elige una opción para continuar:</p>
 
       <div style="display: flex; gap: 8px; margin-bottom: 12px;">
         <button id="tabSolicitar" type="button" onclick="mostrarVista('solicitar')" style="margin:0; background:#173d2b; color:#fff; flex:1; font-size:12px !important; min-height:36px;">
@@ -565,7 +558,7 @@
           <input type="text" id="nombreSolicitante" autocomplete="name" placeholder="Ej: Juan Perez">
         </div>
         <div>
-          <label for="correoSolicitante">Correo electr&oacute;nico</label>
+          <label for="correoSolicitante">Correo electrónico</label>
           <input type="email" id="correoSolicitante" autocomplete="email" placeholder="correo@ejemplo.com">
         </div>
         <button id="botonSolicitarAcceso" type="button" onclick="solicitarAccesoUsuario()">
@@ -586,7 +579,7 @@
       <div id="datosAcceso" class="datos-acceso oculto"></div>
 
       <button id="botonRevisarAcceso" class="boton-secundario oculto" type="button" onclick="comprobarAccesoUsuario()">
-        REVISAR AUTORIZACI&Oacute;N
+        REVISAR AUTORIZACIÓN
       </button>
 
       <button id="botonNuevaSolicitud" class="boton-secundario oculto" type="button" onclick="nuevaSolicitudAcceso()">
@@ -598,7 +591,6 @@
   </div>
 
   <script>
-    // Tu nueva URL implementada en Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbx-Co0NOO0qrqa9gz-u4GiduhpVL5XLHJAsMBVqaC_QjubKDUaXKPrkinvCwkC1VWlW/exec";
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
@@ -614,20 +606,11 @@
     }
 
     function leerAccesoLocal_() {
-      try {
-        return JSON.parse(localStorage.getItem(CLAVE_ACCESO) || "null");
-      } catch (e) {
-        return null;
-      }
+      try { return JSON.parse(localStorage.getItem(CLAVE_ACCESO) || "null"); } catch (e) { return null; }
     }
 
-    function guardarAccesoLocal_(datos) {
-      localStorage.setItem(CLAVE_ACCESO, JSON.stringify(datos));
-    }
-
-    function borrarAccesoLocal_() {
-      localStorage.removeItem(CLAVE_ACCESO);
-    }
+    function guardarAccesoLocal_(datos) { localStorage.setItem(CLAVE_ACCESO, JSON.stringify(datos)); }
+    function borrarAccesoLocal_() { localStorage.removeItem(CLAVE_ACCESO); }
 
     function mostrarVista(vista) {
       const formSolicitar = document.getElementById("formularioAcceso");
@@ -661,8 +644,7 @@
     function mostrarFormularioAcceso_(mensaje) {
       document.getElementById("bloqueoAcceso").classList.remove("oculto");
       document.getElementById("tituloAcceso").textContent = "ACCESO AL SIMULADOR";
-      document.getElementById("mensajeAcceso").textContent =
-        mensaje || "Elige una opcion para continuar:";
+      document.getElementById("mensajeAcceso").textContent = mensaje || "Elige una opcion para continuar:";
 
       mostrarVista('solicitar');
       document.getElementById("datosAcceso").classList.add("oculto");
@@ -710,33 +692,24 @@
 
       if (estado === "SIN_SOLICITUD") {
         borrarAccesoLocal_();
-        mostrarFormularioAcceso_(
-          respuesta && respuesta.mensaje ? respuesta.mensaje : "Ingresa tus datos para solicitar acceso."
-        );
+        mostrarFormularioAcceso_(respuesta && respuesta.mensaje ? respuesta.mensaje : "Ingresa tus datos para solicitar acceso.");
         return;
       }
 
       document.getElementById("bloqueoAcceso").classList.remove("oculto");
       document.getElementById("formularioAcceso").classList.add("oculto");
       document.getElementById("formularioRecuperar").classList.add("oculto");
-      document.getElementById("tituloAcceso").textContent =
-        estado === "RECHAZADO" ? "SOLICITUD RECHAZADA" : "SOLICITUD PENDIENTE";
-      document.getElementById("mensajeAcceso").textContent =
-        respuesta && respuesta.mensaje ? respuesta.mensaje : "Esperando autorizacion del administrador.";
+      document.getElementById("tituloAcceso").textContent = estado === "RECHAZADO" ? "SOLICITUD RECHAZADA" : "SOLICITUD PENDIENTE";
+      document.getElementById("mensajeAcceso").textContent = respuesta && respuesta.mensaje ? respuesta.mensaje : "Esperando autorizacion del administrador.";
 
-      datos.innerHTML =
-        "<strong>Nombre:</strong> " + escaparHtml(respuesta.nombre || "") + "<br>" +
-        "<strong>Correo:</strong> " + escaparHtml(respuesta.email || "");
+      datos.innerHTML = "<strong>Nombre:</strong> " + escaparHtml(respuesta.nombre || "") + "<br>" + "<strong>Correo:</strong> " + escaparHtml(respuesta.email || "");
       datos.classList.remove("oculto");
 
       document.getElementById("botonRevisarAcceso").classList.toggle("oculto", estado === "RECHAZADO");
       document.getElementById("botonNuevaSolicitud").classList.remove("oculto");
 
       caja.className = estado === "RECHAZADO" ? "estado error" : "estado ok";
-      caja.textContent =
-        estado === "RECHAZADO"
-          ? "Puedes enviar una nueva solicitud con estos u otros datos."
-          : "Solicitud enviada. Cuando el administrador la autorice, presiona REVISAR AUTORIZACION.";
+      caja.textContent = estado === "RECHAZADO" ? "Puedes enviar una nueva solicitud con estos u otros datos." : "Solicitud enviada. Cuando el administrador la autorice, presiona REVISAR AUTORIZACION.";
     }
 
     function solicitarAccesoUsuario() {
@@ -766,15 +739,9 @@
         .then(function(respuesta) {
           boton.disabled = false;
           boton.textContent = "ENVIAR SOLICITUD";
-
           if (respuesta && respuesta.token) {
-            guardarAccesoLocal_({
-              token: respuesta.token,
-              nombre: respuesta.nombre || nombre,
-              email: respuesta.email || email
-            });
+            guardarAccesoLocal_({ token: respuesta.token, nombre: respuesta.nombre || nombre, email: respuesta.email || email });
           }
-
           procesarAccesoUsuario(respuesta);
         })
         .catch(function(error) {
@@ -807,11 +774,7 @@
           boton.textContent = "INGRESAR AL SIMULADOR";
 
           if (respuesta && respuesta.autorizado && respuesta.token) {
-            guardarAccesoLocal_({
-              token: respuesta.token,
-              nombre: respuesta.nombre,
-              email: respuesta.email
-            });
+            guardarAccesoLocal_({ token: respuesta.token, nombre: respuesta.nombre, email: respuesta.email });
             document.getElementById("bloqueoAcceso").classList.add("oculto");
           } else {
             caja.className = "estado error";
@@ -848,12 +811,8 @@
       if (ocupaCasaFiscal) {
         correspondeCasa.value = "No";
         correspondeCasa.disabled = true;
-        correspondeCasa.setAttribute("aria-disabled", "true");
-        correspondeCasa.title = "La asignacion de casa no corresponde mientras ocupa casa fiscal.";
       } else {
         correspondeCasa.disabled = false;
-        correspondeCasa.removeAttribute("aria-disabled");
-        correspondeCasa.title = "";
       }
     }
 
@@ -869,20 +828,9 @@
       const selectCOP = document.getElementById("unidadCOP");
 
       const nuncaGraduados = ["Subteniente", "Teniente"];
-      const siempreGraduados = [
-        "Teniente Coronel", 
-        "Coronel", 
-        "General", 
-        "General Inspector", 
-        "General Director"
-      ];
-      const gradosGenerales = [
-        "General", 
-        "General Inspector", 
-        "General Director"
-      ];
+      const siempreGraduados = ["Teniente Coronel", "Coronel", "General", "General Inspector", "General Director"];
+      const gradosGenerales = ["General", "General Inspector", "General Director"];
 
-      // 1. REGLA SUBTENIENTES Y TENIENTES
       if (nuncaGraduados.includes(grado)) {
         campoEsGraduado.style.display = "none";
         selectEsGraduado.value = "No";
@@ -898,7 +846,6 @@
 
       const esGraduado = (selectEsGraduado.value === "Sí") && !nuncaGraduados.includes(grado);
 
-      // 2. REGLA SOBRESUELDO OFICIAL GRADUADO
       campoSobresueldo.style.display = "block";
       if (esGraduado) {
         sobresueldo.value = "Título profesional";
@@ -907,7 +854,6 @@
         sobresueldo.disabled = false;
       }
 
-      // Asignación Policial solo si NO tiene ningún sobresueldo
       if (!esGraduado && sobresueldo.value === "Ninguno") {
         campoAsignacionPolicial.style.display = "block";
       } else {
@@ -915,7 +861,6 @@
         campoAsignacionPolicial.style.display = "none";
       }
 
-      // 3. REGLA GENERALES
       if (gradosGenerales.includes(grado)) {
         campoCOP.style.display = "none";
         selectCOP.value = "No";
@@ -942,18 +887,8 @@
 
       const grado = document.getElementById("grado").value;
       const nuncaGraduados = ["Subteniente", "Teniente"];
-      const siempreGraduados = [
-        "Teniente Coronel", 
-        "Coronel", 
-        "General", 
-        "General Inspector", 
-        "General Director"
-      ];
-      const gradosGenerales = [
-        "General", 
-        "General Inspector", 
-        "General Director"
-      ];
+      const siempreGraduados = ["Teniente Coronel", "Coronel", "General", "General Inspector", "General Director"];
+      const gradosGenerales = ["General", "General Inspector", "General Director"];
 
       let esGraduadoVal = "No";
       if (!nuncaGraduados.includes(grado)) {
@@ -967,6 +902,11 @@
         sobresueldoVal = document.getElementById("sobresueldo").value;
       }
 
+      let asignacionPolicialVal = "No";
+      if (esGraduadoVal === "No" && sobresueldoVal === "Ninguno") {
+        asignacionPolicialVal = document.getElementById("asignacionPolicial").value;
+      }
+
       const unidadCOPVal = gradosGenerales.includes(grado) ? "No" : document.getElementById("unidadCOP").value;
 
       const datos = {
@@ -976,7 +916,7 @@
         cargasFamiliares: document.getElementById("cargasFamiliares").value,
         esGraduado: esGraduadoVal,
         sobresueldo: sobresueldoVal,
-        asignacionPolicial: document.getElementById("asignacionPolicial").value,
+        asignacionPolicial: asignacionPolicialVal,
         porcentajeZona: document.getElementById("porcentajeZona").value,
         correspondeCasa: document.getElementById("correspondeCasa").value,
         ocupaCasaFiscal: document.getElementById("ocupaCasaFiscal").value,
@@ -1014,30 +954,15 @@
 
       document.getElementById("tablaHaberes").innerHTML =
         resultado.haberes
-          .filter(function(item) {
-            return Number(item.valor || 0) !== 0;
-          })
-          .map(function(item) {
-            return "<tr>" +
-              "<td>" + escaparHtml(item.letra) + "</td>" +
-              "<td>" + escaparHtml(item.concepto) + "</td>" +
-              "<td class='valor'>" + moneda(item.valor) + "</td>" +
-              "</tr>";
-          }).join("");
+          .filter(item => Number(item.valor || 0) !== 0)
+          .map(item => "<tr><td>" + escaparHtml(item.letra) + "</td><td>" + escaparHtml(item.concepto) + "</td><td class='valor'>" + moneda(item.valor) + "</td></tr>")
+          .join("");
 
       document.getElementById("tablaDescuentos").innerHTML =
         resultado.descuentos
-          .filter(function(item) {
-            return Number(item.valor || 0) !== 0;
-          })
-          .map(function(item) {
-            return "<tr>" +
-              "<td>" + escaparHtml(item.tipo) + "</td>" +
-              "<td>" + escaparHtml(item.concepto) + "</td>" +
-              "<td>" + escaparHtml(item.origen) + "</td>" +
-              "<td class='valor'>" + moneda(item.valor) + "</td>" +
-              "</tr>";
-          }).join("");
+          .filter(item => Number(item.valor || 0) !== 0)
+          .map(item => "<tr><td>" + escaparHtml(item.tipo) + "</td><td>" + escaparHtml(item.concepto) + "</td><td>" + escaparHtml(item.origen) + "</td><td class='valor'>" + moneda(item.valor) + "</td></tr>")
+          .join("");
 
       const resumen = [
         ["TOTAL IMPONIBLE", resultado.resumen.totalImponible],
@@ -1051,22 +976,9 @@
       ];
 
       document.getElementById("tablaResumen").innerHTML =
-        resumen.map(function(fila) {
-          const clase =
-            fila[0] === "ALCANCE LÍQUIDO"
-              ? "valor liquido"
-              : "valor";
+        resumen.map(fila => "<tr><th>" + escaparHtml(fila[0]) + "</th><td class='" + (fila[0] === "ALCANCE LÍQUIDO" ? "valor liquido" : "valor") + "'>" + moneda(fila[1]) + "</td></tr>").join("");
 
-          return "<tr>" +
-            "<th>" + escaparHtml(fila[0]) + "</th>" +
-            "<td class='" + clase + "'>" + moneda(fila[1]) + "</td>" +
-            "</tr>";
-        }).join("");
-
-      window.scrollTo({
-        top: document.getElementById("resultado").offsetTop - 10,
-        behavior: "smooth"
-      });
+      window.scrollTo({ top: document.getElementById("resultado").offsetTop - 10, behavior: "smooth" });
     }
 
     function mostrarError(error) {
@@ -1076,41 +988,23 @@
 
       const estado = document.getElementById("estado");
       estado.className = "estado error";
-      estado.textContent =
-        error && error.message
-          ? error.message
-          : "No fue posible realizar el cálculo.";
+      estado.textContent = error && error.message ? error.message : "No fue posible realizar el cálculo.";
     }
 
     function tarjetaPrincipal(titulo, valor) {
-      return "<div class='tarjeta-principal'>" +
-        "<small>" + escaparHtml(String(titulo)) + "</small>" +
-        "<strong>" + moneda(valor) + "</strong>" +
-        "</div>";
+      return "<div class='tarjeta-principal'><small>" + escaparHtml(String(titulo)) + "</small><strong>" + moneda(valor) + "</strong></div>";
     }
 
     function tarjeta(titulo, valor) {
-      return "<div class='tarjeta'>" +
-        "<small>" + escaparHtml(String(titulo)) + "</small>" +
-        "<strong>" + escaparHtml(String(valor)) + "</strong>" +
-        "</div>";
+      return "<div class='tarjeta'><small>" + escaparHtml(String(titulo)) + "</small><strong>" + escaparHtml(String(valor)) + "</strong></div>";
     }
 
     function moneda(valor) {
-      return new Intl.NumberFormat("es-CL", {
-        style: "currency",
-        currency: "CLP",
-        maximumFractionDigits: 0
-      }).format(Number(valor || 0));
+      return new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(Number(valor || 0));
     }
 
     function escaparHtml(texto) {
-      return String(texto)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+      return String(texto).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
   </script>
 </body>
