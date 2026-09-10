@@ -42,7 +42,7 @@
       padding: 0 10px calc(25px + env(safe-area-inset-bottom));
     }
 
-    /* Margen superior forzado para respetar Isla Dinámica, Notch y Barra de Estado */
+    /* Margen superior para despejar Isla Dinámica, Notch y Barra de Estado */
     .contenedor {
       width: 100% !important;
       max-width: 960px;
@@ -538,6 +538,7 @@
     </footer>
   </main>
 
+  <!-- Modal de control de acceso -->
   <div id="bloqueoAcceso" class="bloqueo-acceso">
     <div class="acceso-card">
       <h2 id="tituloAcceso">ACCESO AL SIMULADOR</h2>
@@ -591,7 +592,8 @@
   </div>
 
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbx-Co0NOO0qrqa9gz-u4GiduhpVL5XLHJAsMBVqaC_QjubKDUaXKPrkinvCwkC1VWlW/exec";
+    // URL activa de tu Google Apps Script
+    const API_URL = "https://script.google.com/macros/s/AKfycbxYiizw7y5ZPBH9hzKJcUqPTJ5pX9Od_9CEybJVe-iMziI1a6VX72JJ-LRT64clErHr/exec";
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
     async function ejecutarApiGAS(accion, payload = {}) {
