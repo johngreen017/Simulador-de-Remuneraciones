@@ -592,7 +592,6 @@
   </div>
 
   <script>
-    // URL activa de tu Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbxYiizw7y5ZPBH9hzKJcUqPTJ5pX9Od_9CEybJVe-iMziI1a6VX72JJ-LRT64clErHr/exec";
     const CLAVE_ACCESO = "simuladorRemuneracionesAcceso";
 
@@ -882,54 +881,72 @@
       const boton = document.getElementById("botonCalcular");
       const estado = document.getElementById("estado");
 
-      boton.disabled = true;
-      boton.textContent = "CALCULANDO...";
-      estado.className = "estado";
-      estado.textContent = "";
+      try {
+        const fechaIngresoVal = document.getElementById("fechaIngreso").value;
+        const fechaConsultaVal = document.getElementById("fechaConsulta").value;
 
-      const grado = document.getElementById("grado").value;
-      const nuncaGraduados = ["Subteniente", "Teniente"];
-      const siempreGraduados = ["Teniente Coronel", "Coronel", "General", "General Inspector", "General Director"];
-      const gradosGenerales = ["General", "General Inspector", "General Director"];
+        if (!fechaIngresoVal || fechaIngresoVal.trim() === "") {
+          throw new Error("Ingrese la fecha de ingreso a la institución.");
+        }
+        if (!fechaConsultaVal || fechaConsultaVal.trim() === "") {
+          throw new Error("Ingrese la fecha a consultar.");
+        }
 
-      let esGraduadoVal = "No";
-      if (!nuncaGraduados.includes(grado)) {
-        esGraduadoVal = siempreGraduados.includes(grado) ? "Sí" : document.getElementById("esGraduado").value;
+        boton.disabled = true;
+        boton.textContent = "CALCULANDO...";
+        estado.className = "estado";
+        estado.textContent = "";
+
+        const grado = document.getElementById("grado").value;
+        const nuncaGraduados = ["Subteniente", "Teniente"];
+        const siempreGraduados = ["Teniente Coronel", "Coronel", "General", "General Inspector", "General Director"];
+        const gradosGenerales = ["General", "General Inspector", "General Director"];
+
+        let esGraduadoVal = "No";
+        if (!nuncaGraduados.includes(grado)) {
+          esGraduadoVal = siempreGraduados.includes(grado) ? "Sí" : document.getElementById("esGraduado").value;
+        }
+
+        let sobresueldoVal = "Ninguno";
+        if (esGraduadoVal === "Sí") {
+          sobresueldoVal = "Título profesional";
+        } else {
+          sobresueldoVal = document.getElementById("sobresueldo").value;
+        }
+
+        let asignacionPolicialVal = "No";
+        if (esGraduadoVal === "No" && sobresueldoVal === "Ninguno") {
+          asignacionPolicialVal = document.getElementById("asignacionPolicial").value;
+        }
+
+        const unidadCOPVal = gradosGenerales.includes(grado) ? "No" : document.getElementById("unidadCOP").value;
+
+        const datos = {
+          fechaConsulta: fechaConsultaVal.trim(),
+          fechaIngreso: fechaIngresoVal.trim(),
+          grado: grado,
+          cargasFamiliares: document.getElementById("cargasFamiliares").value,
+          esGraduado: esGraduadoVal,
+          sobresueldo: sobresueldoVal,
+          asignacionPolicial: asignacionPolicialVal,
+          porcentajeZona: document.getElementById("porcentajeZona").value,
+          correspondeCasa: document.getElementById("correspondeCasa").value,
+          ocupaCasaFiscal: document.getElementById("ocupaCasaFiscal").value,
+          unidadCOP: unidadCOPVal,
+          descuentosParticulares: document.getElementById("descuentosParticulares").value,
+          tokenAcceso: (leerAccesoLocal_() || {}).token || ""
+        };
+
+        ejecutarApiGAS("calcularRemuneracion", { datos: datos })
+          .then(mostrarResultado)
+          .catch(mostrarError);
+
+      } catch (err) {
+        boton.disabled = false;
+        boton.textContent = "CALCULAR REMUNERACIÓN";
+        estado.className = "estado error";
+        estado.textContent = err.message || "Error al validar los datos ingresados.";
       }
-
-      let sobresueldoVal = "Ninguno";
-      if (esGraduadoVal === "Sí") {
-        sobresueldoVal = "Título profesional";
-      } else {
-        sobresueldoVal = document.getElementById("sobresueldo").value;
-      }
-
-      let asignacionPolicialVal = "No";
-      if (esGraduadoVal === "No" && sobresueldoVal === "Ninguno") {
-        asignacionPolicialVal = document.getElementById("asignacionPolicial").value;
-      }
-
-      const unidadCOPVal = gradosGenerales.includes(grado) ? "No" : document.getElementById("unidadCOP").value;
-
-      const datos = {
-        fechaConsulta: document.getElementById("fechaConsulta").value,
-        fechaIngreso: document.getElementById("fechaIngreso").value,
-        grado: grado,
-        cargasFamiliares: document.getElementById("cargasFamiliares").value,
-        esGraduado: esGraduadoVal,
-        sobresueldo: sobresueldoVal,
-        asignacionPolicial: asignacionPolicialVal,
-        porcentajeZona: document.getElementById("porcentajeZona").value,
-        correspondeCasa: document.getElementById("correspondeCasa").value,
-        ocupaCasaFiscal: document.getElementById("ocupaCasaFiscal").value,
-        unidadCOP: unidadCOPVal,
-        descuentosParticulares: document.getElementById("descuentosParticulares").value,
-        tokenAcceso: (leerAccesoLocal_() || {}).token || ""
-      };
-
-      ejecutarApiGAS("calcularRemuneracion", { datos: datos })
-        .then(mostrarResultado)
-        .catch(mostrarError);
     }
 
     function mostrarResultado(resultado) {
